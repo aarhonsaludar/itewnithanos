@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</head>
+<body class="bg-body-tertiary">
+    
+    <div class="container-fluid mt-2 col-6 d-flex align-items-center flex-column">
+        <label for="txtName">Name:</label>
+        <input type="text" class="input-group" id="txtName" required> <br>
+        <label for="">Age:</label>
+        <input type="number" class="input-group" id="txtAge"> <br>
+        <label for="">Email:</label>
+        <input type="email" class="input-group" id="txtEmail"> <br>
+        <label for="">Student Id:</label>
+        <input type="number" class="input-group" id="txtStudId"> <br> 
+        <label for="">Course:</label>
+        <select name="Course" id="course" class="form-select">
+            <option value="" disabled selected>Your Course:</option>
+            <option value="Information Technology">Information Technology</option>
+            <option value="Computer Science">Computer Science</option>
+            <option value="Psychology">Psychology</option>
+            <option value="Education">Education</option>
+            <option value="Accountancy">Accountancy</option>
+        </select>
+        <button onclick="displayPerson()" class="btn btn-primary mt-3" >Submit</button> <br>
+    
+        <table class="table table-bordered text-center">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Age Category</th>
+                    <th>Email</th>
+                    <th>Id</th>
+                    <th>Course</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="tblPerson"></tbody>
+        </table>
+
+    </div>
+   
+
+    <script src="Person.js"></script>
+    <script src="Student.js"></script>
+
+    <script>
+        let arrayPerson = [];
+        let txtName = document.getElementById("txtName");
+        let txtAge = document.getElementById("txtAge");
+        let txtEmail = document.getElementById("txtEmail");
+        let txtStudId = document.getElementById("txtStudId");
+        let course =  document.getElementById("course");
+        let tblPerson = document.getElementById("tblPerson");
+
+        function inputHandling() {
+            if (txtName.value === "" || txtStudId.value === "" || txtAge.value === "" || course.value === ""){
+                alert("Fields should not have a blank");
+                return false;
+            }
+            let name = txtName.value;
+            for (let index = 0; index < name.length; index++){
+                let char = name[index];
+                if (char >=  '0' && char <= '9'){
+                    alert("The should not have a numbers");
+                    return  false;
+                }
+            }
+            return true;
+        }
+        function displayPerson() {
+            if (!inputHandling()) {
+                return false;
+            }
+            let objStudent = new Student(txtName.value, parseInt(txtAge.value), txtEmail.value, txtStudId.value, course.value);
+            arrayPerson.push(objStudent);
+            console.log(arrayPerson);
+            displayTable();
+
+            txtName.value = "";
+            txtAge.value = "";
+            txtEmail.value = "";
+            txtStudId.value = "";
+            course.value  = "";
+        }
+        function displayTable() {
+            tblPerson.innerHTML = "";
+            let rowHTML = "";
+
+            arrayPerson.forEach((element,index) => {
+                rowHTML += `<tr id="row-${index}">
+                                <td>
+                                    <span id="name-${index}">${element.getName()}</span>
+                                    <input type="text" id="edit-txtName-${index}" value="${element.getName()}" style="display:none">
+                                </td>
+
+                                <td>
+                                    <span id="age-${index}">${element.getAge()}</span>
+                                    <input type="number" id="edit-txtAge-${index}" value="${element.getAge()}" style="display:none">                                    
+                                </td>
+
+                                <td id="age-category-${index}">${element.getAgeCategory()}</td>
+
+                                <td>
+                                    <span id="email-${index}">${element.getEmail()}</span>
+                                    <input type="email" id="edit-txtEmail-${index}" value="${element.getEmail()}" style="display:none">                                    
+                                </td>
+
+                                <td>
+                                    <span id="studId-${index}">${element.getId()}</span>
+                                    <input type="number" id="edit-txtStudId-${index}" value="${element.getId()}" style="display:none">                                    
+                                </td>
+
+                                <td>
+                                    <span id="course-span-${index}">${element.getCourse()}</span>
+                                </td>                             
+                                <td>
+                                    <button onclick="editPerson(${index})" id="edit-btn-${index}" class="btn btn-primary">Edit</button>
+                                    <button onclick="savePerson(${index})" id="save-btn-${index}" class="btn btn-success" style="display:none">Save</button>
+                                    <button onclick="deletePerson(${index})" class="btn btn-danger">Delete</button>
+                                </td>
+                            </tr>`
+                
+            });
+            tblPerson.innerHTML =  rowHTML;
+        }
+        function editPerson(index) {
+            document.getElementById(`name-${index}`).style.display = "none";
+            document.getElementById(`edit-txtName-${index}`).style.display = "block";
+            document.getElementById(`age-${index}`).style.display = "none";
+            document.getElementById(`edit-txtAge-${index}`).style.display = "block";
+            document.getElementById(`email-${index}`).style.display = "none";
+            document.getElementById(`edit-txtEmail-${index}`).style.display = "block";
+            document.getElementById(`studId-${index}`).style.display = "none";
+            document.getElementById(`edit-txtStudId-${index}`).style.display = "block";
+            document.getElementById(`edit-btn-${index}`).style.display = "none";
+            document.getElementById(`save-btn-${index}`).style.display = "block";
+
+        }
+        function savePerson(index){
+            let newName = document.getElementById(`edit-txtName-${index}`).value;
+            let newAge = document.getElementById(`edit-txtAge-${index}`).value;
+            let newEmail = document.getElementById(`edit-txtEmail-${index}`).value;
+            let newStudId = document.getElementById(`edit-txtStudId-${index}`).value;
+                        
+            
+            arrayPerson[index].setName(newName);
+            arrayPerson[index].setAge(newAge);
+            arrayPerson[index].setEmail(newEmail);
+            arrayPerson[index].setId(newStudId);
+            displayTable();
+
+        }
+        function deletePerson(index) {
+            if (confirm("Are you sure you want to delete this person?")) {
+                arrayPerson.splice(index, 1);
+            console.log(arrayPerson);
+            displayTable();
+            } else {
+                return false;
+            }
+        }
+    </script>
+</body>
+</html>
